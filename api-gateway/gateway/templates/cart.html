@@ -1,7 +1,86 @@
-<h2>Your Cart</h2>
-
-<ul>
-{% for item in items %}
-<li>Book ID: {{ item.book_id }} | Qty: {{ item.quantity }}</li>
-{% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng - BookStore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; }
+        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-right: 20px; padding: 8px 15px; border-radius: 5px; transition: 0.3s; }
+        nav a:hover { background: rgba(255,255,255,0.2); }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .cart-container { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .cart-items { background: white; padding: 20px; border-radius: 8px; }
+        .cart-summary { background: white; padding: 20px; border-radius: 8px; height: fit-content; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .item-info h4 { color: #333; margin-bottom: 5px; }
+        .item-info p { color: #666; font-size: 14px; }
+        .item-price { font-weight: bold; color: #667eea; }
+        .item-actions { display: flex; gap: 10px; }
+        .btn-remove { padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-remove:hover { background: #c82333; }
+        .summary-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .summary-row.total { font-size: 18px; font-weight: bold; color: #667eea; border-bottom: none; padding-top: 15px; }
+        .checkout-btn { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        .checkout-btn:hover { background: #218838; }
+        .empty-cart { text-align: center; padding: 40px; }
+        .empty-cart p { font-size: 18px; color: #666; margin-bottom: 20px; }
+        .continue-btn { display: inline-block; padding: 10px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
+        .continue-btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>📚 BookStore</h1>
+            <div style="display: flex; gap: 20px;">
+                <a href="{% url 'book_list' %}">🏠 Trang Chủ</a>
+                <a href="{% url 'order_list' %}">📦 Đơn Hàng</a>
+                <a href="{% url 'logout' %}">🚪 Đăng Xuất</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <a href="{% url 'book_list' %}" class="back-link">← Quay lại mua hàng</a>
+        
+        <h1>🛒 Giỏ Hàng Của Bạn</h1>
+        
+        {% if items %}
+        <div class="cart-container">
+            <div class="cart-items">
+                {% for item in items %}
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h4>Sách #{{ item.book_id }}</h4>
+                        <p>Số lượng: {{ item.quantity }}</p>
+                    </div>
+                    <div class="item-price">{{ item.total_price|default:"0"|floatformat:0 }}₫</div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-summary">
+                <h3>📊 Tóm Tắt</h3>
+                <div class="summary-row total">
+                    <span>Tổng cộng:</span>
+                    <span>{{ total_amount|default:"0"|floatformat:0 }}₫</span>
+                </div>
+                <a href="{% url 'checkout' %}" class="checkout-btn">💳 Thanh Toán</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-cart">
+            <p style="font-size: 48px; margin-bottom: 20px;">📭</p>
+            <p>Giỏ hàng của bạn đang trống</p>
+            <a href="{% url 'book_list' %}" class="continue-btn">Tiếp tục mua sắm</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

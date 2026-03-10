@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Voucher - BookStore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; }
+        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .btn { display: inline-block; padding: 10px 20px; margin-bottom: 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; border: none; cursor: pointer; }
+        .btn:hover { opacity: 0.9; }
+        .table-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9f9f9; padding: 12px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #ddd; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f9f9f9; }
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 5px; font-size: 12px; background: #d4edda; color: #155724; }
+        .badge.expired { background: #f8d7da; color: #721c24; }
+        .empty { text-align: center; padding: 40px; background: white; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>🎫 Quản Lý Voucher</h1>
+            <div style="display: flex; gap: 20px;">
+                <a href="{% url 'staff_dashboard' %}">Quay lại</a>
+                <a href="{% url 'logout' %}">Đăng Xuất</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <a href="/staff/add-voucher/" class="btn">➕ Tạo Voucher</a>
+        
+        {% if vouchers %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Giảm</th>
+                        <th>Hạn Sử Dụng</th>
+                        <th>Đã Dùng</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voucher in vouchers %}
+                    <tr>
+                        <td><strong>{{ voucher.code }}</strong></td>
+                        <td>{{ voucher.discount_percent }}%</td>
+                        <td>
+                            {{ voucher.start_date|date:"d/m/Y" }} - 
+                            {{ voucher.end_date|date:"d/m/Y" }}
+                        </td>
+                        <td>{{ voucher.used_count }}/{{ voucher.max_uses }}</td>
+                        <td>
+                            <span class="badge {% if not voucher.is_active %}expired{% endif %}">
+                                {% if voucher.is_active %}Hoạt động{% else %}Hết hạn{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/staff/edit-voucher/{{ voucher.id }}/" style="color: #667eea; text-decoration: none;">✏️ Sửa</a> |
+                            <form method="POST" action="/staff/delete-voucher/{{ voucher.id }}/" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" style="background: none; border: none; color: #dc3545; cursor: pointer; text-decoration: none;">🗑️ Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            <p>Chưa có voucher nào</p>
+            <a href="/staff/add-voucher/" class="btn">Tạo voucher đầu tiên</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

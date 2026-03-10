@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookStore - Danh Sách Sách</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        header .nav {
+            display: flex;
+            gap: 20px;
+        }
+        
+        header .nav a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        header .nav a:hover {
+            color: #764ba2;
+        }
+        
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .book-card-body {
+            padding: 20px;
+        }
+        
+        .book-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .book-card .author {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .book-card .price {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .book-card .stock {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .book-card a {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .book-card a:hover {
+            opacity: 0.9;
+        }
+        
+        .empty {
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 BookStore</h1>
+            <div class="nav">
+                <a href="{% url 'book_list' %}">Danh sách sách</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'view_cart' %}">Giỏ hàng</a>
+                    <a href="{% url 'order_list' %}">Đơn hàng</a>
+                    {% if user.profile.role == 'staff' %}
+                        <a href="{% url 'staff_dashboard' %}">Nhân viên</a>
+                    {% endif %}
+                    {% if user.profile.role == 'admin' %}
+                        <a href="{% url 'admin_dashboard' %}">Quản trị</a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}">Đăng xuất ({{ user.username }})</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Đăng nhập</a>
+                    <a href="{% url 'register' %}">Đăng ký</a>
+                {% endif %}
+            </div>
+        </header>
+        
+        {% if books %}
+        <div class="book-grid">
+            {% for book in books %}
+            <div class="book-card">
+                <div class="book-card-body">
+                    <h3>{{ book.title }}</h3>
+                    <p class="author">👤 {{ book.author }}</p>
+                    <p class="price">💰 {{ book.price }} VNĐ</p>
+                    <p class="stock">📦 Trong kho: {{ book.stock }}</p>
+                    <a href="{% url 'book_detail' book.id %}">Xem chi tiết</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h2>Không có sách nào</h2>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

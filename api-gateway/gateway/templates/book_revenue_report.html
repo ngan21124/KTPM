@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Doanh Thu Sách - BookStore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; }
+        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .table-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9f9f9; padding: 12px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #ddd; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f9f9f9; }
+        .number { text-align: right; }
+        .total-row { background: #e7e7ff; font-weight: bold; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>📊 Báo Cáo Doanh Thu Sách</h1>
+            <div style="display: flex; gap: 20px;">
+                <a href="{% url 'admin_dashboard' %}">Quay lại</a>
+                <a href="{% url 'logout' %}">Đăng Xuất</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <a href="{% url 'admin_dashboard' %}" class="back-link">← Quay lại bảng điều khiển</a>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên Sách</th>
+                        <th>Tác Giả</th>
+                        <th class="number">Số Lượng Bán</th>
+                        <th class="number">Đơn Giá</th>
+                        <th class="number">Tổng Doanh Thu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report %}
+                    <tr>
+                        <td>{{ item.book_id }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.author }}</td>
+                        <td class="number">{{ item.quantity_sold }}</td>
+                        <td class="number">{{ item.price|floatformat:0 }}₫</td>
+                        <td class="number"><strong>{{ item.total_revenue|floatformat:0 }}₫</strong></td>
+                    </tr>
+                    {% endfor %}
+                    {% if report %}
+                    <tr class="total-row">
+                        <td colspan="4">TỔNG</td>
+                        <td class="number">-</td>
+                        <td class="number">{{ total|floatformat:0 }}₫</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+            {% if not report %}
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <p>Chưa có dữ liệu báo cáo</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

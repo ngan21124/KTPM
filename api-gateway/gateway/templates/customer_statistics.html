@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê Khách Hàng - BookStore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; }
+        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-right: 20px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .stat-box h3 { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .stat-box .big { font-size: 36px; font-weight: bold; color: #667eea; }
+        .table-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9f9f9; padding: 12px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #ddd; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f9f9f9; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>📈 Thống Kê Khách Hàng</h1>
+            <div style="display: flex; gap: 20px;">
+                <a href="{% url 'admin_dashboard' %}">Quay lại</a>
+                <a href="{% url 'logout' %}">Đăng Xuất</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <a href="{% url 'admin_dashboard' %}" class="back-link">← Quay lại bảng điều khiển</a>
+        
+        <h1>Thống Kê Khách Hàng</h1>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <h3>👥 Tổng Khách Hàng</h3>
+                <div class="big">{{ total_customers }}</div>
+            </div>
+            <div class="stat-box">
+                <h3>📦 Tổng Đơn Hàng</h3>
+                <div class="big">{{ total_orders }}</div>
+            </div>
+            <div class="stat-box">
+                <h3>💰 Doanh Thu Trung Bình</h3>
+                <div class="big">{{ avg_order_value|floatformat:0 }}₫</div>
+            </div>
+            <div class="stat-box">
+                <h3>🎯 Khách Hàng Hoạt Động</h3>
+                <div class="big">{{ active_customers }}</div>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 40px; margin-bottom: 20px;">Danh Sách Khách Hàng Hàng Đầu</h2>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên Khách</th>
+                        <th>Email</th>
+                        <th>Số Đơn</th>
+                        <th>Tổng Chi Tiêu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in top_customers %}
+                    <tr>
+                        <td>{{ customer.user_id }}</td>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.order_count }}</td>
+                        <td><strong>{{ customer.total_spent|floatformat:0 }}₫</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% if not top_customers %}
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <p>Chưa có dữ liệu khách hàng</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
